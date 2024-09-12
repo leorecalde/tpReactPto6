@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import "./Formulario.css";
 import ListaColores from "./ListaColores";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Formulario = () => {
   const {
@@ -13,7 +13,16 @@ const Formulario = () => {
     reset,
   } = useForm();
 
-  const [arrayColores, setArrayColores] = useState([]);
+
+  const leerLocalStorage = JSON.parse(localStorage.getItem("coloresKey")) || [];
+  const [arrayColores, setArrayColores] = useState(leerLocalStorage);
+
+  useEffect(() =>{
+    console.log("se habilita el ciclo de vida de useEffect");
+    localStorage.setItem("coloresKey", JSON.stringify(arrayColores));
+  }, [arrayColores])
+
+  
   const [color, setColor] = useState(""); // Estado para el color actual
 
   const onSubmit = (data) => {
@@ -23,18 +32,23 @@ const Formulario = () => {
     setColor(""); // Resetea el estado del color actual
   };
 
+  const borrarColor = (nombreColor) => {
+    const arrayFiltrado = arrayColores.filter((color) => color !== nombreColor);
+    setArrayColores(arrayFiltrado);
+  };
+
   return (
     <article>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <div className="row bg-celeste p-5">
-          <div className="border border-danger col-3"></div>
+          <div className="border border-danger bg-danger col-3"></div>
           <Form.Group className="mb-3 mt-5 col-9">
-            <Form.Label>Ingresa un color</Form.Label>
+            <Form.Label>Ingresa un color EN INGLES</Form.Label>
             <Form.Control
               {...register("colores", {
                 required: "Debes ingresar un color",
                 minLength: {
-                  value: 4,
+                  value: 3,
                   message: "El mínimo debe ser 4 caracteres",
                 },
                 maxLength: {
@@ -43,9 +57,9 @@ const Formulario = () => {
                 },
               })}
               type="text"
-              placeholder="Rojo"
-              value={color} // Vincula el estado del color actual
-              onChange={(e) => setColor(e.target.value)} // Actualiza el estado del color actual
+              placeholder="Red, blue, green, yelow, black, white"
+              value={color} 
+              onChange={(e) => setColor(e.target.value)}
             />
             <Form.Text className="text-danger mb-3">
               {errors.colores?.message}
@@ -58,7 +72,7 @@ const Formulario = () => {
           </Button>
         </div>
       </Form>
-      <ListaColores arrayColores={arrayColores} />
+      <ListaColores arrayColores={arrayColores} borrarColor={borrarColor} />
     </article>
   );
 };

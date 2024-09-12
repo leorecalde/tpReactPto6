@@ -1,21 +1,23 @@
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 
-const ListaColores = ({ arrayColores }) => {
+const ListaColores = ({ arrayColores, borrarColor }) => {
   return (
-    <div className="row text-center">
+    <div className="containar mt-3">
+    <div className="d-flex flex-column align-items-center flex-md-row">
       {arrayColores.map((color, indice) => (
-        <Card key={indice} style={{ width: "18rem" }} className="col-12 col-md-3">
+        <Card className="col-md mx-3" key={indice} style={{ width: "18rem" }}>
           <Card.Body className="d-flex flex-column">
             <Card.Title>{color}</Card.Title>
             <div
               className="border border-success col-3 p-5 my-3"
-              style={{backgroundColor: `${color}` ,padding: '90px'}}
+              style={{ backgroundColor: color }}
             ></div>
-            <Button variant="danger">Borrar</Button>
+            <Button variant="danger" onClick={() => borrarColor(color)}>Borrar</Button>
           </Card.Body>
         </Card>
       ))}
+    </div>
     </div>
   );
 };
